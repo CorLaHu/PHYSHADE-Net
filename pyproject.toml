@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "physhade"
+version = "0.1.0"
+description = "PHYSHADE-Net: physics-guided U-Net for building shadow segmentation and height estimation from aerial imagery"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Lars Huizer", email = "corhula@gmail.com" }]
+keywords = ["remote-sensing", "shadow-segmentation", "physics-informed", "unet", "building-height"]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: GIS",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "numpy<2.4",  # numpy>=2.4 hard-crashes on Windows inside skimage.transform (see docs/pipeline.md)
+    "pandas",
+    "scipy",
+    "scikit-image",
+    "scikit-learn",
+    "torch",
+    "torchvision",
+    "kornia",
+    "affine",
+    "rasterio",
+    "geopandas",
+    "shapely>=2.0",
+    "pvlib",
+    "opencv-python-headless",
+    "matplotlib",
+    "seaborn",
+    "tqdm",
+    "imageio",
+    "pillow",
+    "tensorboard",
+]
+
+[project.urls]
+Repository = "https://github.com/CorLaHu/PHYSHADE-Net"
+Thesis = "https://repository.tudelft.nl/file/File_3e638270-231d-40ee-9dad-86d76b7ee195"
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "ruff", "pre-commit"]
+build = ["py7zr"]  # only needed to rebuild the dataset from source archives
+
+[project.scripts]
+physhade-build-dataset = "physhade.data.build_dataset:main"
+physhade-preprocess = "physhade.data.training_preprocessing:main"
+physhade-build-base-dataset = "physhade.data.build_base_dataset:main"
+physhade-stage-luo = "physhade.data.stage_luo:main"
+physhade-split-annotations = "physhade.data.split_annotations:main"
+physhade-build-heights = "physhade.data.build_heights:main"
+physhade-train-base = "physhade.train.basemodel_training:main"
+physhade-train-main = "physhade.train.mainmodel_training:main"
+physhade-train-final = "physhade.train.final_training:main"
+physhade-infer = "physhade.inference.quick_inference:main"
+physhade-qual = "physhade.inference.qual_analysis:main"
+physhade-qual-final = "physhade.inference.qual_final_model:main"
+physhade-ablation-tables = "physhade.inference.ablation_tables:main"
+physhade-fold-complexity = "physhade.inference.fold_complexity:main"
+physhade-disagreement = "physhade.inference.disagreement:main"
+physhade-height = "physhade.height.height_pipeline:main"
+physhade-height-synthetic = "physhade.height.height_estimation:main"
+physhade-blob-showcase = "physhade.height.blob_showcase:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+ignore = [
+    "E501",   # long lines in research code / docstrings
+    "E741",   # l_min / l_max style ambiguous names are domain-standard here
+    "B905",   # zip() without strict= - pre-3.10 compat not needed but noisy to fix
+]
+
+[tool.ruff.lint.per-file-ignores]
+# mainmodel_training keeps a deliberate `import rasterio` before torchvision
+# (Windows GDAL/torch DLL load-order clash); qual_analysis keeps a couple of
+# visualization-prep locals that read better named than inlined.
+"src/physhade/train/mainmodel_training.py" = ["E402"]
+"src/physhade/inference/qual_analysis.py" = ["F841"]

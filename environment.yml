@@ -1,0 +1,37 @@
+name: physhade
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+
+  # geospatial stack - one shared libgdal
+  - gdal
+  - rasterio
+  - geopandas
+  - shapely>=2.0
+  - pyproj
+
+  # scientific
+  - numpy<2.4  # numpy>=2.4 crashes on Windows inside skimage.transform (docs/pipeline.md)
+  - scipy
+  - pandas
+  - scikit-image
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - opencv
+  - imageio
+  - pillow
+  - tqdm
+  - affine
+
+  - pvlib
+  - tensorboard
+
+  - pip:
+      - torch>=2.5
+      - torchvision
+      - kornia
+      - py7zr  # only for rebuilding the dataset from source archives
+      - "-e ."

@@ -1,0 +1,38 @@
+# build / packaging
+*.egg-info/
+dist/
+build/
+__pycache__/
+*.py[cod]
+
+# environments / editors / OS
+.venv/
+venv/
+.idea/
+.vscode/
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+*.log
+
+# data & run artifacts (not distributed - see DATA.md)
+Output/
+Dataset/
+data_sources/
+
+# source archives / large binaries
+*.7z
+*.tar
+*.zip
+*.npy
+*.pth
+*.gpkg
+
+# geodata (regenerated locally)
+*.shp
+*.dbf
+*.shx
+*.prj
+*.cpg
+*.sbn
+*.sbx
